@@ -1,0 +1,9 @@
+services:
+  clob-coe:
+    build: .
+    container_name: clob-coe
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: sh -c "python -m app.main && dbt build --project-dir dbt --profiles-dir dbt"

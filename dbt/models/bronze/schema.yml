@@ -1,0 +1,22 @@
+version: 2
+models:
+  - name: br_observations
+    columns:
+      - name: submission_id
+        tests: [not_null, unique]
+  - name: br_safety
+    columns:
+      - name: submission_id
+        tests: [not_null, unique]
+  - name: br_svi
+    columns:
+      - name: submission_id
+        tests: [not_null, unique]
+  - name: br_math
+    columns:
+      - name: submission_id
+        tests: [not_null, unique]
+  - name: br_language
+    columns:
+      - name: submission_id
+        tests: [not_null, unique]

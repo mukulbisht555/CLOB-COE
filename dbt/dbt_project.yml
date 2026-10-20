@@ -1,0 +1,28 @@
+name: clob_coe_elt
+version: "1.0.0"
+config-version: 2
+
+profile: clob_coe_elt
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+seed-paths: ["seeds"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - target
+  - dbt_packages
+
+models:
+  clob_coe_elt:
+    sef_clob_bronze:
+      +materialized: table
+      +schema: bronze
+    sef_clob_silver:
+      +materialized: table
+      +schema: silver
+    sef_clob_gold:
+      +materialized: table
+      +schema: gold

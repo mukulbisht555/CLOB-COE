@@ -1,0 +1,178 @@
+version: 2
+
+models:
+
+  # ---------------------------------------------------------------
+  # Layer 1: base / bridge
+  # ---------------------------------------------------------------
+
+  - name: gold_observation_base
+    description: >
+      One row per observation submission. Shared backbone for every
+      Impact Metrics mart: resolves academic_cycle (e.g. "2025-26",
+      Apr-Mar) and academic_quarter (Q1=Apr-Jun ... Q4=Jan-Mar) from
+      observation_date, and extracts teacher_uid from the structured
+      teacher_name code (e.g. "T14-BS-Rajni" -> "T14-BS").
+    columns:
+      - name: submission_id
+        tests: [not_null, unique]
+      - name: academic_cycle
+        tests: [not_null]
+      - name: teacher_uid
+        tests: [not_null]
+
+  - name: gold_observation_classroom_bridge
+    description: >
+      One row per observation submission x classroom code. Splits
+      classroom_name_raw (space-separated on co_teach submissions) so
+      classroom-grain metrics count each classroom once. Confirmed:
+      classroom_uid is unique on its own, no school_name compounding
+      needed.
+    columns:
+      - name: submission_id
+        tests: [not_null]
+      - name: classroom_uid
+        tests: [not_null]
+
+  # ---------------------------------------------------------------
+  # Layer 2: indicator-grain facts
+  # ---------------------------------------------------------------
+
+  - name: gold_safety_observations
+    description: One row per observation with numeric safety level extracted from the "level_N" text code.
+    columns:
+      - name: submission_id
+        tests: [not_null]
+
+  - name: gold_math_indicator_responses
+    description: >
+      One row per observation x math indicator code, with math_domain
+      (cc/psr/tr/gm) parsed from the code prefix and the confirmed
+      proficiency flag (mostly/vproficient) precomputed.
+    columns:
+      - name: submission_id
+        tests: [not_null]
+      - name: indicator_code
+        tests: [not_null]
+      - name: math_domain
+        tests: [not_null]
+
+  - name: gold_language_practice_responses
+    description: >
+      One row per observation x language practice x selected sub-practice
+      step, joined to the confirmed step totals (inlined as a CTE in this
+      model) so pct_steps_observed and is_practice_hit (>=70%) are
+      computed directly - no external blend needed for this metric.
+    columns:
+      - name: submission_id
+        tests: [not_null]
+      - name: language_practice
+        tests: [not_null]
+
+  - name: gold_svi_indicator_responses
+    description: >
+      One row per observation x classroom code (via the bridge) x SVI
+      indicator group x code. Two independent flags: is_21c_domain_indicator
+      (co/ct/cr rows, for the 21C Skills detail page) and
+      is_sv_aligned_teacher_action (TA_SV_* rows excluding 'none', for
+      the IM04 >=5-actions rule and the future 6E-stage blend).
+    columns:
+      - name: submission_id
+        tests: [not_null]
+      - name: classroom_uid
+        tests: [not_null]
+      - name: indicator_group
+        tests: [not_null]
+      - name: indicator_code
+        tests: [not_null]
+
+  - name: gold_classroom_participation
+    description: >
+      Raw student_sampling / student_learning signals per observation x
+      classroom code. No "active participation" flag yet - scale and
+      threshold still unconfirmed (blocks IM05/IM06).
+    columns:
+      - name: submission_id
+        tests: [not_null]
+      - name: classroom_uid
+        tests: [not_null]
+
+  # ---------------------------------------------------------------
+  # Layer 3: teacher / classroom x cycle x quarter rollups
+  # (these are the tables the dashboard should actually query)
+  # ---------------------------------------------------------------
+
+  - name: gold_teacher_safety_summary
+    description: >
+      Teacher x cycle x quarter. For each teacher-period, finds the
+      single latest observation, explodes it across its named
+      classroom(s) via the bridge (co-teach submissions can name more
+      than one), and flags is_safety_level3plus when the AVERAGE safety
+      level across those classrooms is >= 3. Also carries one fixed
+      baseline value per teacher x cycle (reused across all quarters of
+      that year): baseline_source ('previous_year_last' or
+      'current_year_first') and baseline_avg_classroom_safety_level (raw
+      averaged number from that anchor observation's classroom(s), no
+      pass/fail threshold applied - that's left to Looker Studio).
+      program_name is carried through from the latest observation for
+      filtering. Feeds IM01.
+    columns:
+      - name: teacher_uid
+        tests: [not_null]
+      - name: academic_cycle
+        tests: [not_null]
+
+
+  - name: gold_teacher_math_summary
+    description: >
+      Teacher x cycle x quarter. is_math_proficient = >=2 of the 4 math
+      domains had at least one mostly/vproficient indicator in that
+      period. Feeds IM02, IM07.
+    columns:
+      - name: teacher_uid
+        tests: [not_null]
+      - name: academic_cycle
+        tests: [not_null]
+
+  - name: gold_teacher_language_summary
+    description: >
+      Teacher x cycle x quarter. is_language_proficient = >=2 of the 8
+      language practices reached the 70% step threshold on at least one
+      observation in that period (hindi/english observations only).
+      Feeds IM03, IM08.
+    columns:
+      - name: teacher_uid
+        tests: [not_null]
+      - name: academic_cycle
+        tests: [not_null]
+
+  - name: gold_classroom_21c_summary
+    description: >
+      Classroom x cycle x quarter. is_21c_integrated = at least one
+      observation of that classroom in the period recorded >=5 distinct
+      SV-aligned teacher actions. Feeds IM04, IM09.
+    columns:
+      - name: classroom_uid
+        tests: [not_null]
+      - name: academic_cycle
+        tests: [not_null]
+  
+  - name: gold_classroom_safety
+    description: >
+      Teacher x cycle x quarter. For each teacher-period, finds the
+      single latest observation, explodes it across its named
+      classroom(s) via the bridge (co-teach submissions can name more
+      than one), and flags is_safety_level3plus when the AVERAGE safety
+      level across those classrooms is >= 3. Also carries one fixed
+      baseline value per teacher x cycle (reused across all quarters of
+      that year): baseline_source ('previous_year_last' or
+      'current_year_first') and baseline_avg_classroom_safety_level (raw
+      averaged number from that anchor observation's classroom(s), no
+      pass/fail threshold applied - that's left to Looker Studio).
+      program_name is carried through from the latest observation for
+      filtering. Feeds IM01.
+    columns:
+      - name: classroom_uid
+        tests: [not_null]
+      - name: academic_cycle
+        tests: [not_null]

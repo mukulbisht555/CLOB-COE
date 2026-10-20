@@ -1,0 +1,24 @@
+clob_coe_elt:
+  target: "{{ env_var('DBT_TARGET', 'local') }}"
+  outputs:
+    local:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('DBT_BIGQUERY_PROJECT_ID', env_var('BIGQUERY_PROJECT_ID')) }}"
+      dataset: "{{ env_var('DBT_DEFAULT_DATASET', 'dbt_work') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', env_var('BIGQUERY_LOCATION', 'US')) }}"
+      keyfile: "{{ env_var('DBT_BIGQUERY_KEYFILE', env_var('LOCAL_BIGQUERY_CREDENTIALS_FILE', env_var('BIGQUERY_CREDENTIALS_FILE'))) }}"
+      threads: "{{ env_var('DBT_THREADS', '4') | int }}"
+      timeout_seconds: 300
+      priority: interactive
+
+    prod:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('DBT_BIGQUERY_PROJECT_ID', env_var('BIGQUERY_PROJECT_ID')) }}"
+      dataset: "{{ env_var('DBT_DEFAULT_DATASET', 'dbt_work') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', env_var('BIGQUERY_LOCATION', 'US')) }}"
+      keyfile: "{{ env_var('DBT_BIGQUERY_KEYFILE', env_var('PROD_BIGQUERY_CREDENTIALS_FILE', env_var('BIGQUERY_CREDENTIALS_FILE'))) }}"
+      threads: "{{ env_var('DBT_THREADS', '4') | int }}"
+      timeout_seconds: 300
+      priority: interactive

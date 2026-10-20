@@ -1,0 +1,7 @@
+version: 2
+sources:
+  - name: raw
+    database: "{{ target.project }}"
+    schema: raw
+    tables:
+      - name: observation_submissions

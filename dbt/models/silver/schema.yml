@@ -1,0 +1,70 @@
+version: 2
+
+models:
+
+  - name: fct_observations
+    description: "One row per Kobo observation submission. submission_id is the stable Kobo _id linkage key."
+    columns:
+      - name: submission_id
+        description: "Stable Kobo submission identifier from the raw _id field."
+        tests:
+          - not_null
+          - unique
+
+  - name: fct_safety_actions
+    description: "One row per selected safety action for an observation."
+    columns:
+      - name: submission_id
+        description: "Stable Kobo submission identifier."
+        tests:
+          - not_null
+      - name: safety_action
+        description: "Selected safety action code."
+        tests:
+          - not_null
+
+  - name: fct_svi_indicators
+    description: "One row per selected SVI indicator or teacher action."
+    columns:
+      - name: submission_id
+        description: "Stable Kobo submission identifier."
+        tests:
+          - not_null
+      - name: indicator_group
+        description: "SVI group: co_indicator, ct_indicator, cr_indicator, or teacher_action."
+        tests:
+          - not_null
+      - name: indicator_code
+        description: "Selected SVI indicator or teacher action code."
+        tests:
+          - not_null
+
+  - name: fct_math_indicators
+    description: "One row per math indicator response for an observation."
+    columns:
+      - name: submission_id
+        description: "Stable Kobo submission identifier."
+        tests:
+          - not_null
+      - name: indicator_code
+        description: "Math indicator code."
+        tests:
+          - not_null
+
+  - name: fct_language_practices
+    description: "One row per submission, language practice, and selected sub-language practice."
+    columns:
+      - name: submission_id
+        description: "Stable Kobo submission identifier."
+        tests:
+          - not_null
+
+      - name: language_practice
+        description: "Language practice code such as LP1, LP2, LP3, LP4, LP6, LP8, or LP9."
+        tests:
+          - not_null
+
+      - name: sub_language_practice
+        description: "Selected sub-language practice code such as OS1, LSR2, BS3, RF1, VP4, SP2, or WP1."
+        # tests:
+        #   - not_null
