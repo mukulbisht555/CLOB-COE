@@ -1,4 +1,5 @@
 .env
+secrets
 logs/
 dbt/logs/
 dbt/target/
