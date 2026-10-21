@@ -1,7 +1,7 @@
 services:
-  clob-coe:
+  clob-coe-teacher-log:
     build: .
-    container_name: clob-coe
+    container_name: clob-coe-X-teacher-log
     env_file:
       - .env
     volumes:

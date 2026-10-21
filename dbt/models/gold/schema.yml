@@ -176,3 +176,52 @@ models:
         tests: [not_null]
       - name: academic_cycle
         tests: [not_null]
+
+  - name: gold_teacher_inputs
+    description: >
+      Teacher profile -> "Coaching inputs - from logbook". One row per
+      teacher-log submission x coaching touchpoint (a log with no touchpoints
+      appears once with NULL touchpoint columns). All five tiles are plain
+      aggregates of this table: SUM(touchpoint_count), AVG(rating),
+      SUM(tlm_session_count), and SUM(touchpoint_count) by touchpoint or
+      subject_label.
+    columns:
+      - name: submission_id
+        tests: [not_null]
+      - name: academic_cycle
+        tests: [not_null]
+      - name: academic_quarter
+        tests: [not_null]
+      - name: teacher_uid
+        description: Full teacher_name code, same construction as gold_observation_base.
+        tests:
+          - not_null:
+              config: {severity: warn}
+      - name: touchpoint
+        description: Co-teaching, Co-planning, Modelling, Debrief, Training Workshop or Other. NULL on a log with no touchpoints.
+        tests:
+          - accepted_values:
+              values: ['Co-teaching', 'Co-planning', 'Modelling', 'Debrief', 'Training Workshop', 'Other']
+              config: {severity: warn}
+      - name: subject
+        description: Raw subject focus as stored by the form.
+      - name: subject_label
+        description: Display label for the subject-focus chart.
+      - name: rating
+        description: Effectiveness rating, 1-4. NULL on a log with no touchpoints.
+        tests:
+          - accepted_values:
+              values: [1, 2, 3, 4]
+              config: {severity: warn}
+      - name: tlm_introduced
+        description: TRUE / FALSE from the "Were any TLMs introduced?" answer; NULL if blank.
+      - name: touchpoint_count
+        description: 1 on a touchpoint row, 0 on a no-touchpoint row. SUM for "Total touchpoints".
+        tests:
+          - accepted_values:
+              values: [0, 1]
+      - name: tlm_session_count
+        description: 1 on exactly one row per log that introduced TLMs, else 0. SUM for "TLMs introduced".
+        tests:
+          - accepted_values:
+              values: [0, 1]

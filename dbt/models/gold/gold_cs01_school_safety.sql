@@ -5,15 +5,7 @@
 ) }}
 
 -- Grain: one row per school_name x academic_cycle x safety_level.
--- Feeds CS01 ("Safety level distribution by school" - 100% stacked bar,
--- one bar per school, segments = Level 1-4).
---
---   school_name        - school code (GL, LD, KN, BS, KD, LL ...)
---   academic_cycle      - e.g. "2025-26" (Apr-Mar year)
---   safety_level        - 1-4, digit extracted from the "level_N" code
---   observation_count   - number of observations at that level, for that
---                         school, in that cycle
---
+-- Feeds CS01 
 -- Confirmed rules:
 --   * ALL observations count (not just the latest per teacher/classroom) -
 --     this is a distribution of observations, so each submission counts

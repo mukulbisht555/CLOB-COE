@@ -11,11 +11,6 @@
 -- >= 5 distinct SV-aligned teacher-action codes (TA_SV_*, excluding
 -- 'none'). A classroom is integrated in the period if ANY of its
 -- observations in that period hit that threshold.
---
--- Note: the KPI card on the dashboard is worded "Teachers integrating
--- 21C skills" but the confirmed grain is classroom x cycle - if you
--- also want a teacher-level version of this same >=5-actions rule, say
--- so and I'll add gold_teacher_21c_summary alongside this one.
 
 WITH action_counts_per_observation AS (
 

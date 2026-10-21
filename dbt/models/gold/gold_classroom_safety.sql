@@ -25,9 +25,6 @@
 -- it's joined to gold_observation_classroom_bridge here to get one row
 -- per submission x classroom - a co-teach submission naming 2
 -- classrooms contributes a row to each classroom independently.
---
--- Does not touch gold_safety_observations or
--- gold_observation_classroom_bridge - both joined/read as-is.
 
 WITH distinct_classroom_submissions AS (
 

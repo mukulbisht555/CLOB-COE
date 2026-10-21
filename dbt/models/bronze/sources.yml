@@ -5,3 +5,8 @@ sources:
     schema: raw
     tables:
       - name: observation_submissions
+  - name: raw
+    database: "{{ target.project }}"
+    schema: raw
+    tables:
+      - name: teacher_submissions  

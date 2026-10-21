@@ -6,8 +6,7 @@ Loads KoboToolbox submissions into BigQuery.
 Design notes
 ------------
 - The destination table's schema is defined explicitly (TABLE_SCHEMA) so
-  BigQuery never silently trusts a stale or auto-detected schema - this was
-  the root cause of an earlier "No such field: submission_id" load failure.
+  BigQuery never silently trusts a stale or auto-detected schema.
 - The dataset and table are created automatically on first run if missing.
 - "No duplicates" is achieved via a watermark: get_watermark() reads
   MAX(submission_id) directly from BigQuery before each run. There is no
