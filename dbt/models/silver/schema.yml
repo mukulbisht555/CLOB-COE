@@ -68,3 +68,19 @@ models:
         description: "Selected sub-language practice code such as OS1, LSR2, BS3, RF1, VP4, SP2, or WP1."
         # tests:
         #   - not_null
+  
+  - name: tl_fct_teacher_log
+    description: "One row per Kobo teacher logbook submission. submission_id is the stable Kobo _id linkage key."
+    columns:
+      - name: submission_id
+        description: "Stable Kobo submission identifier from the raw _id field."
+        tests:
+          - not_null
+          - unique
+  - name: tl_fct_touchpoints
+    description: "One row per Kobo teacher logbook submission. submission_id is the stable Kobo _id linkage key."
+    columns:
+      - name: submission_id
+        description: "Stable Kobo submission identifier from the raw _id field."
+        tests:
+          - not_null

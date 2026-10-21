@@ -20,3 +20,8 @@ models:
     columns:
       - name: submission_id
         tests: [not_null, unique]
+  
+  - name: tl_br_observations
+    columns:
+      - name: submission_id
+        tests: [not_null, unique]
